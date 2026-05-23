@@ -264,9 +264,7 @@
   }
 
   thead {
-    position: sticky;
-    top: 86px;
-    z-index: 5;
+    position: static;
   }
 
   th,
@@ -398,6 +396,71 @@
       height: 58px;
     }
   }
+
+  /* hot fix tabelas bugando: evita cabeçalhos flutuando e mantém rolagem horizontal */
+  .table-wrap {
+    width: 100%;
+    overflow-x: auto;
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    border: 1px solid rgba(234, 216, 195, 0.9);
+    background: white;
+    margin-bottom: 28px;
+  }
+
+  .table-wrap table {
+    width: 100%;
+    min-width: 850px;
+    border-collapse: collapse;
+    border-spacing: 0;
+    box-shadow: none;
+    border: none;
+    border-radius: 0;
+    display: table;
+    white-space: normal;
+  }
+
+  .table-wrap thead {
+    position: static;
+  }
+
+  .table-wrap th,
+  .table-wrap td {
+    white-space: normal;
+  }
+
+  .table-wrap th {
+    white-space: nowrap;
+  }
+
+  .table-wrap td:last-child,
+  .table-wrap th:last-child {
+    text-align: center;
+  }
+
+  .table-wrap .danger {
+    white-space: nowrap;
+  }
+
+  @media (max-width: 900px) {
+    .table-wrap {
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+    }
+
+    .table-wrap table {
+      min-width: 820px;
+      display: table;
+      white-space: normal;
+    }
+  }
+
+  @media (max-width: 560px) {
+    .table-wrap table {
+      min-width: 760px;
+    }
+  }
+
 </style>
 </head>
 <body>
@@ -452,7 +515,8 @@
       </div>
 
       <h2>Gatos cadastrados</h2>
-      <table>
+      <div class="table-wrap">
+        <table>
         <thead>
           <tr>
             <th>Foto</th>
@@ -465,7 +529,8 @@
           </tr>
         </thead>
         <tbody id="pets-list"></tbody>
-      </table>
+        </table>
+      </div>
     </section>
 
     <section id="adotantes">
@@ -484,7 +549,8 @@
       </div>
 
       <h2>Adotantes cadastrados</h2>
-      <table>
+      <div class="table-wrap">
+        <table>
         <thead>
           <tr>
             <th>Nome</th>
@@ -495,7 +561,8 @@
           </tr>
         </thead>
         <tbody id="adotantes-list"></tbody>
-      </table>
+        </table>
+      </div>
     </section>
 
     <section id="adocoes">
@@ -518,7 +585,8 @@
       </div>
 
       <h2>Adoções registradas</h2>
-      <table>
+      <div class="table-wrap">
+        <table>
         <thead>
           <tr>
             <th>Gato</th>
@@ -529,12 +597,14 @@
           </tr>
         </thead>
         <tbody id="adocoes-list"></tbody>
-      </table>
+        </table>
+      </div>
     </section>
 
     <section id="solicitacoes">
       <h2>Solicitações de adoção</h2>
-      <table>
+      <div class="table-wrap">
+        <table>
         <thead>
           <tr>
             <th>Nome</th>
@@ -548,7 +618,8 @@
           </tr>
         </thead>
         <tbody id="solicitacoes-list"></tbody>
-      </table>
+        </table>
+      </div>
     </section>
   </main>
 

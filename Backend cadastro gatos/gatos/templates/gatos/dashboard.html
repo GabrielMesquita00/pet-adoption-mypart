@@ -548,31 +548,31 @@
       }
     }
 
-    async function carregarSolicitacoes() {
-  const solicitacoes = await requestJson('/api/dashboard/solicitacoes/');
-  const tbody = document.getElementById('solicitacoes-list');
+  async function carregarSolicitacoes() {
+      const solicitacoes = await requestJson('/api/dashboard/solicitacoes/');
+      const tbody = document.getElementById('solicitacoes-list');
 
-  tbody.innerHTML = '';
+      tbody.innerHTML = '';
 
-  solicitacoes.forEach(solicitacao => {
-    tbody.innerHTML += `
-      <tr>
-        <td>${solicitacao.nome}</td>
-        <td>${solicitacao.telefone}</td>
-        <td>${solicitacao.email || '-'}</td>
-        <td>${solicitacao.animal_interesse || '-'}</td>
-        <td>${solicitacao.mensagem || '-'}</td>
-        <td>
-          <select onchange="alterarStatusSolicitacao(${solicitacao.id}, this.value)">
-            <option value="nova" ${solicitacao.status === 'nova' ? 'selected' : ''}>Nova</option>
-            <option value="em_analise" ${solicitacao.status === 'em_analise' ? 'selected' : ''}>Em análise</option>
-            <option value="respondida" ${solicitacao.status === 'respondida' ? 'selected' : ''}>Respondida</option>
-            <option value="recusada" ${solicitacao.status === 'recusada' ? 'selected' : ''}>Recusada</option>
-          </select>
-        </td>
-        <td>${solicitacao.data_envio}</td>
-        <td>
-          <button class="danger" onclick="removerSolicitacao(${solicitacao.id})">Remover</button>
+      solicitacoes.forEach(solicitacao => {
+        tbody.innerHTML += `
+          <tr>
+            <td>${solicitacao.nome}</td>
+            <td>${solicitacao.telefone}</td>
+            <td>${solicitacao.email || '-'}</td>
+            <td>${solicitacao.animal_interesse || '-'}</td>
+            <td>${solicitacao.mensagem || '-'}</td>
+            <td>
+              <select onchange="alterarStatusSolicitacao(${solicitacao.id}, this.value)">
+                <option value="nova" ${solicitacao.status === 'nova' ? 'selected' : ''}>Nova</option>
+                <option value="em_analise" ${solicitacao.status === 'em_analise' ? 'selected' : ''}>Em análise</option>
+                <option value="respondida" ${solicitacao.status === 'respondida' ? 'selected' : ''}>Respondida</option>
+                <option value="recusada" ${solicitacao.status === 'recusada' ? 'selected' : ''}>Recusada</option>
+              </select>
+            </td>
+            <td>${solicitacao.data_envio}</td>
+            <td>
+            <button class="danger" onclick="removerSolicitacao(${solicitacao.id})">Remover</button>
         </td>
       </tr>
     `;

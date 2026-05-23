@@ -20,7 +20,7 @@
         <img src="./src/img/logo.jpeg" alt="Logo do Lar Bastet" class="brand-logo">
         <div class="brand-copy">
           <strong>Lar Bastet</strong>
-          <span>Jundiaí/SP</span>
+          <span>Campo Limpo Paulista/SP</span>
         </div>
       </a>
 
@@ -46,7 +46,7 @@
       </div>
     </section>
 
-    <section class="section">
+    <section class="section" id="form-adocao">
       <div class="container form-card">
         <h3>Formulário de intenção de adoção</h3>
 
@@ -84,5 +84,47 @@
       </div>
     </section>
   </main>
+
+// script para enviar solicitação de adoção para a dashboard
+<script>
+  const API_BASE_URL =
+    window.location.hostname === '127.0.0.1' || window.location.hostname === 'localhost'
+      ? 'http://127.0.0.1:8000'
+      : 'https://larbastet.onrender.com';
+
+  document.getElementById('form-adocao').addEventListener('submit', async function(event) {
+    event.preventDefault();
+
+    const dados = {
+      nome: document.getElementById('nome').value,
+      telefone: document.getElementById('telefone').value,
+      email: document.getElementById('email').value,
+      animal: document.getElementById('animal').value,
+      mensagem: document.getElementById('mensagem').value,
+    };
+
+    try {
+      const resposta = await fetch(`${API_BASE_URL}/api/solicitacoes-adocao/`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(dados),
+      });
+
+      const resultado = await resposta.json();
+
+      if (!resposta.ok) {
+        throw new Error(resultado.erro || 'Erro ao enviar formulário.');
+      }
+
+      alert('Solicitação enviada com sucesso! O Lar Bastet entrará em contato.');
+      event.target.reset();
+
+    } catch (erro) {
+      alert(erro.message);
+    }
+  });
+</script>
 </body>
 </html>

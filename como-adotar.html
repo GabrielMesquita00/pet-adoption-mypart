@@ -46,11 +46,11 @@
       </div>
     </section>
 
-    <section class="section" id="form-adocao">
+    <section class="section">
       <div class="container form-card">
         <h3>Formulário de intenção de adoção</h3>
 
-        <form class="form-grid">
+        <form class="form-grid" id="form-adocao">
           <div class="field">
             <label for="nome">Nome completo</label>
             <input id="nome" name="nome" type="text" placeholder="Digite seu nome completo">
@@ -85,7 +85,7 @@
     </section>
   </main>
 
-// script para enviar solicitação de adoção para a dashboard
+<!-- script para enviar solicitação de adoção para a dashboard --> 
 <script>
   const API_BASE_URL =
     window.location.hostname === '127.0.0.1' || window.location.hostname === 'localhost'

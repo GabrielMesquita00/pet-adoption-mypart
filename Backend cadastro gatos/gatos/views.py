@@ -62,6 +62,7 @@ def solicitacao_to_dict(solicitacao):
         "telefone": solicitacao.telefone,
         "email": solicitacao.email,
         "animal_interesse": solicitacao.animal_interesse,
+        "mensagem": solicitacao.mensagem,
         "status": solicitacao.status,
         "status_display": solicitacao.get_status_display(),
         "data_envio": solicitacao.data_envio.strftime("%Y-%m-%d %H:%M:%S"),
@@ -121,11 +122,12 @@ def criar_solicitacao_adocao(request):
 # Página da dashboard
 @login_required
 @ensure_csrf_cookie
-@require_http_methods(["POST", "DELETE"])
 def dashboard(request):
     return render(request, "gatos/dashboard.html")
 
 # solicitações de adoção para a dashboard, onde é possível listar todas as solicitações feitas pelos usuários do site
+@login_required
+@require_http_methods(["POST", "DELETE"])
 def dashboard_solicitacoes(request):
     solicitacoes = SolicitacaoAdocao.objects.all().order_by("-data_envio")
     return JsonResponse(
@@ -133,6 +135,8 @@ def dashboard_solicitacoes(request):
         safe=False
     )
 #detalhe da solicitação de adoção, onde é possível alterar o status ou deletar a solicitação
+@login_required
+@require_http_methods(["POST", "DELETE"])
 def dashboard_solicitacao_detalhe(request, solicitacao_id):
     solicitacao = get_object_or_404(SolicitacaoAdocao, id=solicitacao_id)
 

@@ -20,7 +20,7 @@
         <img src="./src/img/logo.jpeg" alt="Logo do Lar Bastet" class="brand-logo">
         <div class="brand-copy">
           <strong>Lar Bastet</strong>
-          <span>Jundiaí/SP</span>
+          <span>Campo Limpo Paulista/SP</span>
         </div>
       </a>
 
@@ -48,17 +48,27 @@
     </section>
 
     <script>
-      fetch('https://pet-adoption-q581.onrender.com/api/gatos/')
+      //fetch('http://127.0.0.1:8000/api/gatos/')
+      const API_BASE_URL =
+        window.location.hostname === '127.0.0.1' || window.location.hostname === 'localhost'
+          ? 'http://127.0.0.1:8000'
+          : 'https://larbastet.onrender.com';
+
+      fetch(`${API_BASE_URL}/api/gatos/`)
         .then(res => res.json())
         .then(gatos => {
           const grid = document.getElementById('cat-grid');
           gatos.forEach(gato => {
             const sexo = gato.sexo === 'M' ? 'Macho' : 'Fêmea';
-            const idade = gato.idade ? gato.idade + ' meses(s)' : 'Idade desconhecida';
-            const foto = gato.foto ? 'http://127.0.0.1:8000/media/' + gato.foto : './src/img/imagemEx.jpg';
+            const idade = gato.idade ? gato.idade + ' ano(s)' : 'Idade desconhecida';
+            const foto = gato.foto ? gato.foto : './src/img/imagemEx.jpg';
             grid.innerHTML += `
               <article class="cat-card">
-                <img src="${foto}" alt="Gato disponível">
+                <img 
+                  src="${foto}" 
+                  alt="${gato.nome || 'Gato disponível'}"
+                  onerror="this.src='./src/img/imagemEx.jpg'"
+                >
                 <div class="cat-card-content">
                   <div class="cat-card-header">
                     <h3>${sexo} · ${gato.cor}</h3>

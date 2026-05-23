@@ -9,8 +9,9 @@ from django.http import JsonResponse
 from django.shortcuts import render, get_object_or_404
 from django.views.decorators.csrf import ensure_csrf_cookie
 from django.views.decorators.http import require_http_methods
+from django.views.decorators.csrf import csrf_exempt
 
-from .models import Pet, Adotante, Adocao
+from .models import Pet, Adotante, Adocao, SolicitacaoAdocao
 
 
 def pet_to_dict(pet, request=None):
@@ -54,6 +55,18 @@ def adocao_to_dict(adocao):
         "observacoes": adocao.observacoes,
     }
 
+def solicitacao_to_dict(solicitacao):
+    return {
+        "id": solicitacao.id,
+        "nome": solicitacao.nome,
+        "telefone": solicitacao.telefone,
+        "email": solicitacao.email,
+        "animal_interesse": solicitacao.animal_interesse,
+        "status": solicitacao.status,
+        "status_display": solicitacao.get_status_display(),
+        "data_envio": solicitacao.data_envio.strftime("%Y-%m-%d %H:%M:%S"),
+    }
+
 
 def json_body(request):
     try:
@@ -70,13 +83,78 @@ def listar_gatos(request):
         safe=False
     )
 
+@csrf_exempt
+@require_http_methods(["POST"])
+def criar_solicitacao_adocao(request):
+    data = json_body(request)
+
+    nome = data.get("nome")
+    telefone = data.get("telefone")
+    email = data.get("email")
+    animal = data.get("animal")
+    mensagem = data.get("mensagem")
+
+    if not nome or not telefone or not email or not animal:
+        return JsonResponse(
+            {"erro": "Todos os campos são obrigatórios."},
+            status=400
+        )
+
+    solicitacao = SolicitacaoAdocao.objects.create(
+        nome=nome,
+        telefone=telefone,
+        email=email,
+        animal_interesse=animal,
+        mensagem=mensagem,
+    )
+
+    return JsonResponse(
+        {
+            "mensagem": "Solicitação enviada com sucesso.",
+            "id": solicitacao.id,
+        },
+        status=201
+    )
+
+
 
 # Página da dashboard
 @login_required
 @ensure_csrf_cookie
+@require_http_methods(["POST", "DELETE"])
 def dashboard(request):
     return render(request, "gatos/dashboard.html")
 
+# solicitações de adoção para a dashboard, onde é possível listar todas as solicitações feitas pelos usuários do site
+def dashboard_solicitacoes(request):
+    solicitacoes = SolicitacaoAdocao.objects.all().order_by("-data_envio")
+    return JsonResponse(
+        [solicitacao_to_dict(solicitacao) for solicitacao in solicitacoes],
+        safe=False
+    )
+#detalhe da solicitação de adoção, onde é possível alterar o status ou deletar a solicitação
+def dashboard_solicitacao_detalhe(request, solicitacao_id):
+    solicitacao = get_object_or_404(SolicitacaoAdocao, id=solicitacao_id)
+
+    if request.method == "DELETE":
+        solicitacao.delete()
+        return JsonResponse({"mensagem": "Solicitação removida com sucesso."})
+
+    data = json_body(request)
+    novo_status = data.get("status")
+
+    status_permitidos = ["nova", "em_analise", "respondida", "recusada"]
+
+    if novo_status not in status_permitidos:
+        return JsonResponse(
+            {"erro": "Status inválido."},
+            status=400
+        )
+
+    solicitacao.status = novo_status
+    solicitacao.save()
+
+    return JsonResponse(solicitacao_to_dict(solicitacao))
 
 # -----------------------------
 # ENDPOINTS DA DASHBOARD - PETS

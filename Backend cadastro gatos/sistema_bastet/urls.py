@@ -35,4 +35,10 @@ urlpatterns = [
 
     path('api/dashboard/adocoes/', views.dashboard_adocoes),
     path('api/dashboard/adocoes/<int:adocao_id>/', views.dashboard_adocao_detalhe),
+
+    path('api/solicitacoes-adocao/', views.criar_solicitacao_adocao),
+
+    path('api/dashboard/solicitacoes/', views.dashboard_solicitacoes),
+    path('api/dashboard/solicitacoes/<int:solicitacao_id>/', views.dashboard_solicitacao_detalhe),
+    
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

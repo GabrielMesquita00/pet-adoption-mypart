@@ -83,3 +83,29 @@ class Adocao(models.Model):
     class Meta:
         verbose_name = "Adoção"
         verbose_name_plural = "Adoções"
+
+
+
+# Modelo para armazenar as solicitações de adoção feitas pelos usuários
+class SolicitacaoAdocao(models.Model):
+    STATUS_CHOICES = [
+        ('nova', 'Nova'),
+        ('em_analise', 'Em Análise'),
+        ('respondida', 'Respondida'),
+        ('recusada', 'Recusada'),
+    ]
+
+    nome = models.CharField(max_length=100)
+    telefone = models.CharField(max_length=20)
+    email = models.EmailField(max_length=100, blank=True, null=True)
+    animal_interesse = models.CharField(max_length=100, blank=True, null=True)
+    mensagem = models.TextField(blank=True, null=True)
+    data_envio = models.DateTimeField(default=timezone.now)
+    status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='nova')
+
+    def __str__(self):
+        return f"Solicitação de {self.nome} - {self.animal_interesse or 'Sem interesse informado'}"
+    class Meta:
+        verbose_name = "Solicitação de Adoção"
+        verbose_name_plural = "Solicitações de Adoção"
+        

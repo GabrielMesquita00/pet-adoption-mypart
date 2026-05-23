@@ -154,6 +154,7 @@
       <button class="active" onclick="showTab('pets', this)">Gatos</button>
       <button onclick="showTab('adotantes', this)">Adotantes</button>
       <button onclick="showTab('adocoes', this)">Adoções</button>
+      <button onclick="showTab('solicitacoes', this)">Solicitações de adoção</button>
     </div>
 
     <section id="pets" class="active">
@@ -267,6 +268,23 @@
         <tbody id="adocoes-list"></tbody>
       </table>
     </section>
+
+    <section id="solicitacoes">
+      <h2>Solicitações de adoção</h2>
+      <table>
+        <thead>
+          <tr>
+            <th>Nome</th>
+            <th>Telefone</th>
+            <th>Email</th>
+            <th>Animal de interesse</th>
+            <th>Status</th>
+            <th>Data de envio</th>
+            <th>Ação</th>
+          </tr>
+        </thead>
+        <tbody id="solicitacoes-list"></tbody>
+      </table>
   </main>
 
   <script>
@@ -530,9 +548,79 @@
       }
     }
 
+    async function carregarSolicitacoes() {
+  const solicitacoes = await requestJson('/api/dashboard/solicitacoes/');
+  const tbody = document.getElementById('solicitacoes-list');
+
+  tbody.innerHTML = '';
+
+  solicitacoes.forEach(solicitacao => {
+    tbody.innerHTML += `
+      <tr>
+        <td>${solicitacao.nome}</td>
+        <td>${solicitacao.telefone}</td>
+        <td>${solicitacao.email || '-'}</td>
+        <td>${solicitacao.animal_interesse || '-'}</td>
+        <td>${solicitacao.mensagem || '-'}</td>
+        <td>
+          <select onchange="alterarStatusSolicitacao(${solicitacao.id}, this.value)">
+            <option value="nova" ${solicitacao.status === 'nova' ? 'selected' : ''}>Nova</option>
+            <option value="em_analise" ${solicitacao.status === 'em_analise' ? 'selected' : ''}>Em análise</option>
+            <option value="respondida" ${solicitacao.status === 'respondida' ? 'selected' : ''}>Respondida</option>
+            <option value="recusada" ${solicitacao.status === 'recusada' ? 'selected' : ''}>Recusada</option>
+          </select>
+        </td>
+        <td>${solicitacao.data_envio}</td>
+        <td>
+          <button class="danger" onclick="removerSolicitacao(${solicitacao.id})">Remover</button>
+        </td>
+      </tr>
+    `;
+  });
+}
+
+
+async function alterarStatusSolicitacao(id, status) {
+  try {
+    await requestJson(`/api/dashboard/solicitacoes/${id}/`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'X-CSRFToken': csrftoken,
+      },
+      body: JSON.stringify({ status }),
+    });
+
+    showMessage('Status da solicitação atualizado.');
+    carregarSolicitacoes();
+  } catch (error) {
+    showMessage(error.message, true);
+  }
+}
+
+
+async function removerSolicitacao(id) {
+  if (!confirm('Tem certeza que deseja remover esta solicitação?')) return;
+
+  try {
+    await requestJson(`/api/dashboard/solicitacoes/${id}/`, {
+      method: 'DELETE',
+      headers: {
+        'X-CSRFToken': csrftoken,
+      },
+    });
+
+    showMessage('Solicitação removida com sucesso.');
+    carregarSolicitacoes();
+  } catch (error) {
+    showMessage(error.message, true);
+  }
+}
+
     carregarPets();
     carregarAdotantes();
     carregarAdocoes();
+    carregarSolicitacoes();
   </script>
 </body>
 </html>

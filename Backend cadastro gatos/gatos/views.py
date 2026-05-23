@@ -127,7 +127,7 @@ def dashboard(request):
 
 # solicitações de adoção para a dashboard, onde é possível listar todas as solicitações feitas pelos usuários do site
 @login_required
-@require_http_methods(["POST", "DELETE"])
+@require_http_methods(["GET"])
 def dashboard_solicitacoes(request):
     solicitacoes = SolicitacaoAdocao.objects.all().order_by("-data_envio")
     return JsonResponse(
